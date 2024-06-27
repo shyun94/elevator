@@ -8,7 +8,8 @@ import { useElevatorsStates } from "./src/elevator/_hooks/useElevatorsStates";
 import { canNotSelectFloor } from "./src/elevator/_policy/canNotSelectFloor";
 
 function App() {
-  const { elevators, updateElevatorState } = useElevatorsStates();
+  const { elevators, setTargetFloor, updateElevatorState } =
+    useElevatorsStates();
 
   const allElevatorIsRun = elevators.every(
     (elevator) => elevator.status === "RUN"
@@ -21,7 +22,7 @@ function App() {
       getStoppedElevators(elevators),
       floor
     );
-    updateElevatorState(elevator, floor);
+    setTargetFloor(elevator, floor);
   };
 
   return (
@@ -30,7 +31,11 @@ function App() {
       <FloorButtons disabled={allElevatorIsRun} selectFloor={selectFloor} />
       <div style={elevatorsWrapperStyle}>
         {elevators.map((elevator) => (
-          <ElevatorComponent key={elevator.id} elevator={elevator} />
+          <ElevatorComponent
+            key={elevator.id}
+            elevator={elevator}
+            updateElevatorState={updateElevatorState}
+          />
         ))}
       </div>
     </>
