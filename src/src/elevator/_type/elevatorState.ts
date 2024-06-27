@@ -3,7 +3,7 @@ export type ElevatorState = {
   currentFloor: number;
 } & (MovingElevator | StoppedElevator);
 
-type Direction = "UP" | "DOWN";
+export type Direction = "UP" | "DOWN";
 
 type MovingElevator = {
   status: "RUN";

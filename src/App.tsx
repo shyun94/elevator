@@ -28,8 +28,8 @@ function App() {
   return (
     <>
       호출
-      <FloorButtons disabled={allElevatorIsRun} selectFloor={selectFloor} />
       <div style={elevatorsWrapperStyle}>
+        <FloorButtons disabled={allElevatorIsRun} selectFloor={selectFloor} />
         {elevators.map((elevator) => (
           <ElevatorComponent
             key={elevator.id}
