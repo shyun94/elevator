@@ -13,8 +13,10 @@ export const ElevatorComponent = ({ elevator }: Props) => {
         <div
           key={index}
           style={
-            elevator.currentFloor === floor && elevator.targetFloor
-              ? movingElevatorStyle
+            elevator.currentFloor === floor
+              ? elevator.targetFloor
+                ? movingElevatorStyle
+                : elevatorStyle
               : undefined
           }
         >
@@ -28,4 +30,9 @@ export const ElevatorComponent = ({ elevator }: Props) => {
 const movingElevatorStyle: CSSProperties = {
   color: "red",
   border: "1px solid red",
+};
+
+const elevatorStyle: CSSProperties = {
+  color: "blue",
+  border: "1px solid blue",
 };
