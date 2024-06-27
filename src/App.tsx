@@ -7,10 +7,15 @@ import { defaultElevators } from "./src/elevator/_policy/defaultElevators";
 
 function App() {
   const [elevators] = useState<ElevatorState[]>(defaultElevators);
+
+  const allElevatorIsRun = elevators.every(
+    (elevator) => elevator.status === "RUN"
+  );
+
   return (
     <>
       호출
-      <FloorButtons />
+      <FloorButtons disabled={allElevatorIsRun} />
       <div style={elevatorsWrapperStyle}>
         {elevators.map((elevator, index) => (
           <ElevatorComponent
