@@ -26,7 +26,6 @@ export const FloorButtons = ({ clickedButtons, clickFloorButton }: Props) => {
                 ? { ...buttonStyle, ...clickedButtonStyle }
                 : buttonStyle
             }
-            key={floor}
             disabled={floor === floors[floors.length - 1]}
             onClick={() => clickFloorButton(floor, "UP")}
           >
@@ -42,7 +41,6 @@ export const FloorButtons = ({ clickedButtons, clickFloorButton }: Props) => {
                 ? { ...buttonStyle, ...clickedButtonStyle }
                 : buttonStyle
             }
-            key={floor}
             disabled={floor === floors[0]}
             onClick={() => clickFloorButton(floor, "DOWN")}
           >
