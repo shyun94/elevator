@@ -3,36 +3,40 @@ import "./App.css";
 import { FloorButtons } from "./src/elevator/floor/components/FloorButtons";
 import { ElevatorComponent } from "./src/elevator/_components/Elevator";
 import { getMostClosedElevator } from "./src/elevator/_policy/getMostClosedElevator";
-import { getStoppedElevators } from "./src/elevator/_policy/getStoppedElevators";
 import { useElevatorsStates } from "./src/elevator/_hooks/useElevatorsStates";
-import { canNotSelectFloor } from "./src/elevator/_policy/canNotSelectFloor";
+import { Direction } from "./src/elevator/_type/elevatorState";
+import { getElevatorsCanSelected } from "./src/elevator/_policy/getElevatorsCanSelected";
 
 function App() {
-  const { elevators, setTargetFloor, updateElevatorState } =
+  const { elevators, setTargetFloorInFloor, updateElevatorState } =
     useElevatorsStates();
 
-  const allElevatorIsRun = elevators.every(
-    (elevator) => elevator.status === "RUN"
-  );
-
-  const selectFloor = (floor: number) => {
-    if (canNotSelectFloor(elevators, floor)) return;
-
+  const clickFloorButton = (floor: number, direction: Direction) => {
     const elevator = getMostClosedElevator(
-      getStoppedElevators(elevators),
+      getElevatorsCanSelected(elevators, floor, direction),
       floor
     );
-    setTargetFloor(elevator, floor);
+    setTargetFloorInFloor(elevator, floor, direction);
   };
+
+  const clickedButtons = elevators.flatMap((elevator) =>
+    elevator.targetFloors.map((floor) => ({
+      floor,
+      direction: elevator.direction!,
+    }))
+  );
 
   return (
     <>
       호출
       <div style={elevatorsWrapperStyle}>
-        <FloorButtons disabled={allElevatorIsRun} selectFloor={selectFloor} />
+        <FloorButtons
+          clickedButtons={clickedButtons}
+          clickFloorButton={clickFloorButton}
+        />
         {elevators.map((elevator) => (
           <ElevatorComponent
-            key={elevator.id}
+            key={`elevator-${elevator.id}`}
             elevator={elevator}
             updateElevatorState={updateElevatorState}
           />

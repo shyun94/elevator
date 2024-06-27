@@ -9,29 +9,29 @@ describe("getStoppedElevators", () => {
         id: 1,
         status: "STOP",
         currentFloor: 1,
-        targetFloor: undefined,
-        direction: "NONE",
+        targetFloors: [],
+        direction: undefined,
       },
       {
         id: 2,
         status: "RUN",
         currentFloor: 1,
-        targetFloor: 2,
+        targetFloors: [2],
         direction: "UP",
       },
       {
         id: 3,
         status: "STOP",
         currentFloor: 1,
-        targetFloor: undefined,
-        direction: "NONE",
+        targetFloors: [],
+        direction: undefined,
       },
     ];
     const stoppedElevators = getStoppedElevators(elevators);
 
     expect(stoppedElevators).toEqual([
-      { id: 1, status: "STOP", currentFloor: 1, targetFloor: 1 },
-      { id: 3, status: "STOP", currentFloor: 1, targetFloor: 1 },
+      { id: 1, status: "STOP", currentFloor: 1, targetFloors: [] },
+      { id: 3, status: "STOP", currentFloor: 1, targetFloors: [] },
     ]);
   });
 });

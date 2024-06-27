@@ -3,29 +3,48 @@ import { Direction } from "../../_type/elevatorState";
 import { floors } from "../consts/floors";
 
 interface Props {
-  disabled: boolean;
-  selectFloor: (floor: number, direction: Direction) => void;
+  clickedButtons: {
+    floor: number;
+    direction: Direction;
+  }[];
+  clickFloorButton: (floor: number, direction: Direction) => void;
 }
 
-export const FloorButtons = ({ disabled, selectFloor }: Props) => {
+export const FloorButtons = ({ clickedButtons, clickFloorButton }: Props) => {
   return (
     <div style={wrapperStyle}>
       {floors.map((floor) => (
-        <div key={`buttons-${floor}`} style={floorButtonsStyle}>
+        <div key={`floor-buttons-${floor}`} style={floorButtonsStyle}>
           {floor}
           <button
-            style={buttonStyle}
+            style={
+              clickedButtons.some(
+                (clickedButton) =>
+                  clickedButton.floor === floor &&
+                  clickedButton.direction === "UP"
+              )
+                ? { ...buttonStyle, ...clickedButtonStyle }
+                : buttonStyle
+            }
             key={floor}
-            disabled={disabled}
-            onClick={() => selectFloor(floor, "UP")}
+            disabled={floor === floors[floors.length - 1]}
+            onClick={() => clickFloorButton(floor, "UP")}
           >
             ⬆️
           </button>
           <button
-            style={buttonStyle}
+            style={
+              clickedButtons.some(
+                (clickedButton) =>
+                  clickedButton.floor === floor &&
+                  clickedButton.direction === "DOWN"
+              )
+                ? { ...buttonStyle, ...clickedButtonStyle }
+                : buttonStyle
+            }
             key={floor}
-            disabled={disabled}
-            onClick={() => selectFloor(floor, "DOWN")}
+            disabled={floor === floors[0]}
+            onClick={() => clickFloorButton(floor, "DOWN")}
           >
             ⬇️
           </button>
@@ -60,4 +79,9 @@ const buttonStyle: CSSProperties = {
   border: "none",
   borderRadius: "50%",
   cursor: "pointer",
+};
+
+const clickedButtonStyle: CSSProperties = {
+  backgroundColor: "blue",
+  color: "white",
 };

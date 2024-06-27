@@ -1,5 +1,9 @@
 import { useCallback, useState } from "react";
-import { ElevatorState } from "../_type/elevatorState";
+import {
+  Direction,
+  ElevatorState,
+  getAddedTargetFloors,
+} from "../_type/elevatorState";
 import { defaultElevators } from "../_policy/defaultElevators";
 
 export const useElevatorsStates = () => {
@@ -16,18 +20,27 @@ export const useElevatorsStates = () => {
     );
   }, []);
 
-  const setTargetFloor = (newElevatorState: ElevatorState, floor: number) => {
+  const setTargetFloorInFloor = (
+    newElevatorState: ElevatorState,
+    floor: number,
+    direction: Direction
+  ) => {
+    const targetFloors = getAddedTargetFloors(
+      newElevatorState.targetFloors,
+      floor
+    );
+
     updateElevatorState({
       ...newElevatorState,
-      targetFloor: floor,
+      targetFloors,
       status: "RUN",
-      direction: newElevatorState.currentFloor < floor ? "UP" : "DOWN",
+      direction,
     });
   };
 
   return {
     elevators,
-    setTargetFloor,
+    setTargetFloorInFloor,
     updateElevatorState,
   };
 };

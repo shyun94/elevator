@@ -4,22 +4,22 @@ export const defaultElevators: ElevatorState[] = [
   {
     id: 1,
     currentFloor: 1,
-    targetFloor: undefined,
+    targetFloors: [],
     status: "STOP",
-    direction: "NONE",
+    direction: undefined,
   },
   {
     id: 2,
     currentFloor: 1,
-    targetFloor: undefined,
+    targetFloors: [],
     status: "STOP",
-    direction: "NONE",
+    direction: undefined,
   },
   {
     id: 3,
     currentFloor: 1,
-    targetFloor: undefined,
+    targetFloors: [],
     status: "STOP",
-    direction: "NONE",
+    direction: undefined,
   },
 ];
