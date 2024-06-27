@@ -9,7 +9,7 @@ describe("getStoppedElevators", () => {
         id: 1,
         status: "STOP",
         currentFloor: 1,
-        targetFloors: [],
+        targetFloor: [],
         direction: undefined,
       },
       {
@@ -23,7 +23,7 @@ describe("getStoppedElevators", () => {
         id: 3,
         status: "STOP",
         currentFloor: 1,
-        targetFloors: [],
+        targetFloor: [],
         direction: undefined,
       },
     ];

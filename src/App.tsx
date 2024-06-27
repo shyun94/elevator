@@ -1,30 +1,26 @@
-import { CSSProperties } from "react";
+import { CSSProperties, useState } from "react";
 import "./App.css";
 import { FloorButtons } from "./src/elevator/floor/components/FloorButtons";
 import { ElevatorComponent } from "./src/elevator/_components/Elevator";
-import { getMostClosedElevator } from "./src/elevator/_policy/getMostClosedElevator";
-import { useElevatorsStates } from "./src/elevator/_hooks/useElevatorsStates";
 import { Direction } from "./src/elevator/_type/elevatorState";
-import { getElevatorsCanSelected } from "./src/elevator/_policy/getElevatorsCanSelected";
 
 function App() {
-  const { elevators, setTargetFloorInFloor, updateElevatorState } =
-    useElevatorsStates();
+  const [clickedButtons, setClickedButtons] = useState<
+    {
+      floor: number;
+      direction: Direction;
+    }[]
+  >([]);
 
   const clickFloorButton = (floor: number, direction: Direction) => {
-    const elevator = getMostClosedElevator(
-      getElevatorsCanSelected(elevators, floor, direction),
-      floor
-    );
-    setTargetFloorInFloor(elevator, floor, direction);
+    setClickedButtons((prev) => [
+      ...prev,
+      {
+        floor,
+        direction,
+      },
+    ]);
   };
-
-  const clickedButtons = elevators.flatMap((elevator) =>
-    elevator.targetFloors.map((floor) => ({
-      floor,
-      direction: elevator.direction!,
-    }))
-  );
 
   return (
     <>
@@ -33,11 +29,11 @@ function App() {
           clickedButtons={clickedButtons}
           clickFloorButton={clickFloorButton}
         />
-        {elevators.map((elevator) => (
+        {[1, 2, 3].map((id) => (
           <ElevatorComponent
-            key={`elevator-${elevator.id}`}
-            elevator={elevator}
-            updateElevatorState={updateElevatorState}
+            key={id}
+            clickedButtons={clickedButtons}
+            setClickedButtons={() => void 0}
           />
         ))}
       </div>

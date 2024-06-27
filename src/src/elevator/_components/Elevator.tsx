@@ -1,73 +1,95 @@
-import { CSSProperties, memo } from "react";
-import { Direction, ElevatorState } from "../_type/elevatorState";
+import {
+  CSSProperties,
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useState,
+} from "react";
+import { Direction } from "../_type/elevatorState";
 import { floors } from "../floor/consts/floors";
-import { useMoveElevatorInterval } from "../_hooks/useMoveElevatorInterval";
+import { useMoveToTargetFloorInterval } from "../_hooks/useMoveToTargetFloorInterval";
+import { defaultElevator } from "../_policy/defaultElevator";
+import { useAllocateElevatorToTargetFloor } from "../_hooks/useAllocateElevatorToTargetFloor";
 
 interface Props {
-  elevator: ElevatorState;
-  updateElevatorState: (newElevatorState: ElevatorState) => void;
+  clickedButtons: {
+    floor: number;
+    direction: Direction;
+  }[];
+  setClickedButtons: Dispatch<
+    SetStateAction<
+      {
+        floor: number;
+        direction: Direction;
+      }[]
+    >
+  >;
 }
 
-export const ElevatorComponent = memo(
-  ({ elevator, updateElevatorState }: Props) => {
-    useMoveElevatorInterval(elevator, updateElevatorState);
+export const ElevatorComponent = ({
+  clickedButtons,
+  setClickedButtons,
+}: Props) => {
+  const [elevator, setElevator] = useState(defaultElevator);
+  const [selectedFloors, setSelectedFloors] = useState<number[]>([]);
 
-    const selectFloor = (floor: number) => {
-      // 방향과 다른 버튼을 누를때는 선택되지 않음
-      if (elevator.direction === "UP" && floor < elevator.currentFloor) return;
-      if (elevator.direction === "DOWN" && floor > elevator.currentFloor)
-        return;
+  useMoveToTargetFloorInterval(elevator, setElevator, setClickedButtons);
+  useAllocateElevatorToTargetFloor(elevator, setElevator, clickedButtons);
 
-      const targetFloors: [number, ...number[]] =
-        elevator.targetFloors.includes(floor)
-          ? (elevator.targetFloors.filter(
-              (targetFloor) => targetFloor !== floor
-            ) as [number, ...number[]])
-          : ([...elevator.targetFloors, floor] as [number, ...number[]]);
+  const selectFloor = (floor: number) => {
+    // 방향과 다른 버튼을 누를때는 선택되지 않음
+    if (elevator.direction === "UP" && floor < elevator.currentFloor) return;
+    if (elevator.direction === "DOWN" && floor > elevator.currentFloor) return;
 
-      const newStates: ElevatorState = {
-        ...elevator,
-        targetFloors,
+    setSelectedFloors((prev) => [...prev, floor]);
+  };
+
+  useEffect(() => {
+    if (elevator.status === "STOP" && selectedFloors.length) {
+      const targetFloor = selectedFloors[0];
+      const direction = targetFloor > elevator.currentFloor ? "UP" : "DOWN";
+
+      setElevator((prev) => ({
+        ...prev,
+        targetFloor,
+        direction,
         status: "RUN",
-        direction:
-          elevator.currentFloor <= floor
-            ? "UP"
-            : elevator.currentFloor > floor
-            ? "DOWN"
-            : (elevator.direction as Direction),
-      };
+      }));
 
-      updateElevatorState(newStates);
-    };
+      setSelectedFloors((prev) => prev.slice(1));
+    }
+  }, [elevator.currentFloor, elevator.status, selectedFloors]);
 
-    return (
-      <div>
-        {elevator.direction === "UP"
-          ? "⬆️"
-          : elevator.direction === "DOWN"
-          ? "⬇️"
-          : "⏹️"}
-        <div style={floorListStyle}>
-          {floors.map((floor, index) => (
-            <button
-              key={index}
-              style={
-                elevator.currentFloor === floor
-                  ? elevator.status === "RUN"
-                    ? movingElevatorStyle
-                    : elevatorStyle
-                  : undefined
-              }
-              onClick={() => selectFloor(floor)}
-            >
-              {floor}
-            </button>
-          ))}
-        </div>
+  return (
+    <div>
+      {elevator.direction === "UP"
+        ? "⬆️"
+        : elevator.direction === "DOWN"
+        ? "⬇️"
+        : "⏹️"}
+      <div style={floorListStyle}>
+        {floors.map((floor, index) => (
+          <button
+            key={index}
+            style={
+              elevator.currentFloor === floor
+                ? elevator.status === "RUN"
+                  ? movingElevatorStyle
+                  : elevatorStyle
+                : undefined
+            }
+            disabled={
+              selectedFloors.includes(floor) || elevator.targetFloor === floor
+            }
+            onClick={() => selectFloor(floor)}
+          >
+            {floor}
+          </button>
+        ))}
       </div>
-    );
-  }
-);
+    </div>
+  );
+};
 
 const movingElevatorStyle: CSSProperties = {
   color: "red",
