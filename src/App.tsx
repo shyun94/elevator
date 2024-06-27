@@ -28,7 +28,6 @@ function App() {
 
   return (
     <>
-      호출
       <div style={elevatorsWrapperStyle}>
         <FloorButtons
           clickedButtons={clickedButtons}

@@ -48,6 +48,7 @@ export const FloorButtons = ({ clickedButtons, clickFloorButton }: Props) => {
           </button>
         </div>
       ))}
+      호출
     </div>
   );
 };
@@ -66,16 +67,10 @@ const floorButtonsStyle: CSSProperties = {
   justifyContent: "center",
   border: "1px solid black",
   borderRadius: "5px",
-  height: "24px",
 };
 
 const buttonStyle: CSSProperties = {
-  width: "24px",
-  height: "24px",
-  padding: "0",
-  margin: "0",
   border: "none",
-  borderRadius: "50%",
   cursor: "pointer",
 };
 

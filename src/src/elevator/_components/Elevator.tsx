@@ -1,7 +1,7 @@
 import { CSSProperties, memo } from "react";
-import { ElevatorState, getRemovedTargetFloors } from "../_type/elevatorState";
+import { Direction, ElevatorState } from "../_type/elevatorState";
 import { floors } from "../floor/consts/floors";
-import { useInterval } from "../../utils/hooks/useInterval";
+import { useMoveElevatorInterval } from "../_hooks/useMoveElevatorInterval";
 
 interface Props {
   elevator: ElevatorState;
@@ -10,54 +10,35 @@ interface Props {
 
 export const ElevatorComponent = memo(
   ({ elevator, updateElevatorState }: Props) => {
-    useInterval(
-      () => {
-        if (elevator.targetFloors.length === 0) {
-          updateElevatorState({
-            ...elevator,
-            status: "STOP",
-            direction: undefined,
-          });
-          return;
-        }
+    useMoveElevatorInterval(elevator, updateElevatorState);
 
-        const targetFloor = elevator.targetFloors[0];
-        if (elevator.currentFloor === targetFloor) {
-          const newStates: ElevatorState =
-            elevator.targetFloors.length === 1
-              ? {
-                  ...elevator,
-                  status: "STOP",
-                  targetFloors: getRemovedTargetFloors(
-                    elevator.targetFloors,
-                    targetFloor
-                  ),
-                }
-              : {
-                  ...elevator,
-                  targetFloors: getRemovedTargetFloors(
-                    elevator.targetFloors,
-                    targetFloor
-                  ) as [number, ...number[]],
-                };
+    const selectFloor = (floor: number) => {
+      // 방향과 다른 버튼을 누를때는 선택되지 않음
+      if (elevator.direction === "UP" && floor < elevator.currentFloor) return;
+      if (elevator.direction === "DOWN" && floor > elevator.currentFloor)
+        return;
 
-          updateElevatorState(newStates);
-          return;
-        }
+      const targetFloors: [number, ...number[]] =
+        elevator.targetFloors.includes(floor)
+          ? (elevator.targetFloors.filter(
+              (targetFloor) => targetFloor !== floor
+            ) as [number, ...number[]])
+          : ([...elevator.targetFloors, floor] as [number, ...number[]]);
 
-        const direction = elevator.currentFloor < targetFloor ? "UP" : "DOWN";
-        const nextFloor =
-          direction === "UP"
-            ? elevator.currentFloor + 1
-            : elevator.currentFloor - 1;
+      const newStates: ElevatorState = {
+        ...elevator,
+        targetFloors,
+        status: "RUN",
+        direction:
+          elevator.currentFloor <= floor
+            ? "UP"
+            : elevator.currentFloor > floor
+            ? "DOWN"
+            : (elevator.direction as Direction),
+      };
 
-        updateElevatorState({
-          ...elevator,
-          currentFloor: nextFloor,
-        });
-      },
-      { delay: 1000, run: elevator.status === "RUN" }
-    );
+      updateElevatorState(newStates);
+    };
 
     return (
       <div>
@@ -68,7 +49,7 @@ export const ElevatorComponent = memo(
           : "⏹️"}
         <div style={floorListStyle}>
           {floors.map((floor, index) => (
-            <div
+            <button
               key={index}
               style={
                 elevator.currentFloor === floor
@@ -77,9 +58,10 @@ export const ElevatorComponent = memo(
                     : elevatorStyle
                   : undefined
               }
+              onClick={() => selectFloor(floor)}
             >
               {floor}
-            </div>
+            </button>
           ))}
         </div>
       </div>
