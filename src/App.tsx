@@ -5,6 +5,7 @@ import { ElevatorComponent } from "./src/elevator/_components/Elevator";
 import { getMostClosedElevator } from "./src/elevator/_policy/getMostClosedElevator";
 import { getStoppedElevators } from "./src/elevator/_policy/getStoppedElevators";
 import { useElevatorsStates } from "./src/elevator/_hooks/useElevatorsStates";
+import { canNotSelectFloor } from "./src/elevator/_policy/canNotSelectFloor";
 
 function App() {
   const { elevators, updateElevatorState } = useElevatorsStates();
@@ -14,6 +15,8 @@ function App() {
   );
 
   const selectFloor = (floor: number) => {
+    if (canNotSelectFloor(elevators, floor)) return;
+
     const elevator = getMostClosedElevator(
       getStoppedElevators(elevators),
       floor
