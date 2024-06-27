@@ -14,16 +14,18 @@ export const ElevatorComponent = memo(
       () => {
         if (elevator.status === "STOP") return;
 
-        if (elevator.currentFloor < elevator.targetFloor!) {
+        if (elevator.currentFloor < elevator.targetFloor) {
           updateElevatorState({
             ...elevator,
             currentFloor: elevator.currentFloor + 1,
+            direction: "UP",
           });
         }
-        if (elevator.currentFloor > elevator.targetFloor!) {
+        if (elevator.currentFloor > elevator.targetFloor) {
           updateElevatorState({
             ...elevator,
             currentFloor: elevator.currentFloor - 1,
+            direction: "DOWN",
           });
         }
         if (elevator.currentFloor === elevator.targetFloor) {
@@ -31,13 +33,20 @@ export const ElevatorComponent = memo(
             ...elevator,
             status: "STOP",
             targetFloor: undefined,
+            direction: undefined,
           });
         }
       },
       { delay: 1000, run: elevator.status === "RUN" }
     );
+
     return (
       <div>
+        {elevator.direction === "UP"
+          ? "⬆️"
+          : elevator.direction === "DOWN"
+          ? "⬇️"
+          : "⏹️"}
         <div style={floorListStyle}>
           {floors.map((floor, index) => (
             <div

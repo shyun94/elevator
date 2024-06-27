@@ -21,6 +21,7 @@ export const useElevatorsStates = () => {
       ...newElevatorState,
       targetFloor: floor,
       status: "RUN",
+      direction: newElevatorState.currentFloor < floor ? "UP" : "DOWN",
     });
   };
 

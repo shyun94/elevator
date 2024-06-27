@@ -8,8 +8,9 @@ describe("canNotSelectFloor", () => {
       {
         id: 1,
         currentFloor: 1,
-        targetFloor: 2,
+        targetFloor: undefined,
         status: "STOP",
+        direction: "NONE",
       },
     ];
     const floor = 1;
@@ -26,6 +27,7 @@ describe("canNotSelectFloor", () => {
         currentFloor: 1,
         targetFloor: 2,
         status: "RUN",
+        direction: "UP",
       },
     ];
     const floor = 2;

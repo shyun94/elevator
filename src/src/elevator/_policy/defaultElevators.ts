@@ -6,17 +6,20 @@ export const defaultElevators: ElevatorState[] = [
     currentFloor: 1,
     targetFloor: undefined,
     status: "STOP",
+    direction: "NONE",
   },
   {
     id: 2,
     currentFloor: 1,
     targetFloor: undefined,
     status: "STOP",
+    direction: "NONE",
   },
   {
     id: 3,
     currentFloor: 1,
     targetFloor: undefined,
     status: "STOP",
+    direction: "NONE",
   },
 ];
