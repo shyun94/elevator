@@ -38,20 +38,22 @@ export const ElevatorComponent = memo(
     );
     return (
       <div>
-        {floors.map((floor, index) => (
-          <div
-            key={index}
-            style={
-              elevator.currentFloor === floor
-                ? elevator.targetFloor
-                  ? movingElevatorStyle
-                  : elevatorStyle
-                : undefined
-            }
-          >
-            {floor}
-          </div>
-        ))}
+        <div style={floorListStyle}>
+          {floors.map((floor, index) => (
+            <div
+              key={index}
+              style={
+                elevator.currentFloor === floor
+                  ? elevator.targetFloor
+                    ? movingElevatorStyle
+                    : elevatorStyle
+                  : undefined
+              }
+            >
+              {floor}
+            </div>
+          ))}
+        </div>
       </div>
     );
   }
@@ -65,4 +67,12 @@ const movingElevatorStyle: CSSProperties = {
 const elevatorStyle: CSSProperties = {
   color: "blue",
   border: "1px solid blue",
+};
+
+const floorListStyle: CSSProperties = {
+  display: "flex",
+  flexDirection: "column-reverse",
+  gap: "10px",
+  padding: "10px",
+  border: "1px solid black",
 };
